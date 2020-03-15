@@ -1,19 +1,24 @@
 const express = require("express");
 const Task = require("../models/task");
+const auth = require("../auth/auth");
 const router = express.Router();
 require("../db/connection");
 
-router.get("/", (req, res) => {
-	Task.find({}, (err, task) => {
+router.get("/addTask/:id", auth.verifyToken, (req, res) => {
+	const _id = req.params.id;
+	Task.find({ owner: _id }, (err, task) => {
 		res.render("addTask", {
-			tasks: task
+			tasks: task,
+			name: req.query.name,
+			id: _id
 		});
 	});
 });
 
-router.post("/addTask", (req, res) => {
+router.post("/addTask/:id", auth.verifyToken, (req, res) => {
 	let newTask = new Task({
-		task: req.body.task
+		task: req.body.task,
+		owner: req.params.id
 	});
 
 	try {
@@ -21,7 +26,7 @@ router.post("/addTask", (req, res) => {
 			if (err) {
 				console.log(err);
 			} else {
-				res.redirect("/");
+				res.redirect(`/addTask/${req.params.id}?name=${req.query.name}`);
 			}
 		});
 	} catch (e) {
@@ -48,7 +53,7 @@ router.patch("/updateTask/:id", (req, res) => {
 			if (err) {
 				console.log(err);
 			} else {
-				res.redirect("/");
+				res.redirect("/addTask");
 			}
 		}
 	);
@@ -60,7 +65,7 @@ router.delete("/deleteTask/:id", (req, res) => {
 			console.log(err);
 		}
 	});
-	res.redirect("/");
+	res.redirect("/addTask");
 });
 
 module.exports = router;
