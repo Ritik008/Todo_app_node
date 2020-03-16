@@ -26,6 +26,11 @@
 
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link
+			rel="stylesheet"
+			media="screen and (max-width: 400px)"
+			href="/style.css"
+		/>
 		<title>Todo</title>
 	</head>
 	<body class="jumbotron">
@@ -48,27 +53,27 @@
 				<button class="btn btn-dark ml-4">Add</button>
 			</form>
 
-			<% for(let i = 0; i < tasks.length ; i++){ %>
+			<% for(let i = 0; i < tasks.length; i++){ %>
 			<div class="shadow-lg p-3 mb-1 bg-white rounded" style="height:7rem">
 				<div>
-					<div class="float-left align-center" style="font-size: 2rem">
-						<%=tasks[i].task%>
+					<div class="float-left align-center display-text">
+						<h3><%=tasks[i].task%></h3>
 					</div>
 					<form
 						action="/deleteTask/<%=tasks[i]._id%>?_method=DELETE"
 						method="POST"
-						class="form-group"
+						class="form-group delete-btn"
 					>
-						<button class="btn btn-danger float-right ml-4 ">
+						<button class="btn btn-danger float-right ml-4">
 							delete
 						</button>
 					</form>
 					<form
 						action="/updateTask/<%=tasks[i]._id%>?_method=GET"
 						method="GET"
-						class="form-group"
+						class="form-group update-btn"
 					>
-						<button type="submit" class="btn btn-primary float-right">
+						<button type="submit" class="btn btn-primary float-right ml-4">
 							update
 						</button>
 					</form>
