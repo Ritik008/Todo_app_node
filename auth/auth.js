@@ -18,7 +18,7 @@ const verifyToken = (req, res, next) => {
 			req.token = bearerHeader;
 			jwt.verify(req.token, process.env.SECRET_KEY, (err, authData) => {
 				if (err) {
-					return res.send("Please login");
+					return res.send("<h1>Please login</h1>");
 				}
 			});
 			next();
