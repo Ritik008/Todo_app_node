@@ -3,13 +3,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const flash = require("express-flash");
-const session = require("express-session");
 const taskRouter = require("./routers/task");
 const userRouter = require("./routers/user");
 const methodOverride = require("method-override");
+const session = require("express-session");
 require("./db/connection");
-const jwt = require("jsonwebtoken");
-const localstorage = require("local-storage");
 
 const app = express();
 
@@ -21,8 +19,8 @@ app.use(methodOverride("_method"));
 // initialize session middleware -flash-express depend on it
 app.use(
 	session({
-		secret: "thesecretkey",
-		resave: false,
+		secret: process.env.SECRET_KEY,
+		resave: true,
 		saveUninitialized: true
 	})
 );
@@ -38,20 +36,6 @@ app.set("views", viewPath);
 // Routers
 app.use(userRouter);
 app.use(taskRouter);
-
-const Task = require("./models/task");
-const User = require("./models/user");
-const main = async () => {
-	// const task = await Task.findById("5e6e56e26023e04764e55cf0");
-	// await task.populate("owner").execPopulate();
-	// console.log(task.owner);
-
-	const user = await User.findById("5e6c690fa32ce31cd4be868b");
-	await user.populate("tasks").execPopulate();
-	console.log(user.tasks);
-};
-
-main();
 
 // port number
 const port = process.env.PORT;

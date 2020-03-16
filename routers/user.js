@@ -2,21 +2,35 @@ const express = require("express");
 const User = require("../models/user");
 const task = require("../routers/task");
 const auth = require("../auth/auth");
+const localstorage = require("local-storage");
 require("../db/connection");
 const router = express.Router();
 
+let sess;
 router.get("/", (req, res) => {
-	res.render("dashboard");
+	if (!req.session.email) {
+		res.render("dashboard");
+	} else {
+		res.redirect(task.route(`/addTask/${sess._id}?name=${sess.name}`).path);
+	}
 });
 
 router.get("/login", (req, res) => {
-	res.render("login", { name: req.name });
+	if (!req.session.email) {
+		res.render("login", { name: req.name });
+	} else {
+		res.redirect(task.route(`/addTask/${sess._id}?name=${sess.name}`).path);
+	}
 });
 
 router.post("/login", (req, res) => {
 	try {
 		User.findByCredentials(req.body.email, req.body.password)
 			.then((user) => {
+				sess = req.session;
+				sess.email = req.body.email;
+				sess._id = user._id;
+				sess.name = user.firstName;
 				auth.generateAuthToken(user._id);
 				res.redirect(
 					task.route(`/addTask/${user._id}?name=${user.firstName}`).path
@@ -31,14 +45,18 @@ router.post("/login", (req, res) => {
 });
 
 router.get("/register", (req, res) => {
-	res.render("register");
+	if (!req.session.email) {
+		res.render("register");
+	} else {
+		res.redirect(task.route(`/addTask/${sess._id}?name=${sess.name}`).path);
+	}
 });
 
 router.post("/register", (req, res) => {
 	const user = new User(req.body);
 	user
 		.save()
-		.then((user) => {
+		.then(() => {
 			res.render("login");
 		})
 		.catch((e) => {
