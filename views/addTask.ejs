@@ -33,7 +33,10 @@
 			<a class="btn btn-secondary text-white float-right" href="/logout"
 				>logout</a
 			>
-			<h1 class="mb-4 text-dark">Welcome <%=name%>, Enter Your Todos</h1>
+			<h1 class="mb-4 text-dark">Welcome <%=name%>, Enter Your Tasks</h1>
+			<% if(messages.Error){ %>
+			<div class="mb-3 text-white bg-danger p-4"><%=messages.Error%></div>
+			<%}%>
 			<form
 				class="form-group d-flex mb-5"
 				action="/addTask/<%=id%>?name=<%=name%>"

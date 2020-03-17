@@ -2,7 +2,6 @@ const express = require("express");
 const User = require("../models/user");
 const task = require("../routers/task");
 const auth = require("../auth/auth");
-const localstorage = require("local-storage");
 require("../db/connection");
 const router = express.Router();
 
@@ -17,31 +16,28 @@ router.get("/", (req, res) => {
 
 router.get("/login", (req, res) => {
 	if (!req.session.email) {
-		res.render("login", { name: req.name });
+		res.render("login");
 	} else {
 		res.redirect(task.route(`/addTask/${sess._id}?name=${sess.name}`).path);
 	}
 });
 
 router.post("/login", (req, res) => {
-	try {
-		User.findByCredentials(req.body.email, req.body.password)
-			.then((user) => {
-				sess = req.session;
-				sess.email = req.body.email;
-				sess._id = user._id;
-				sess.name = user.firstName;
-				auth.generateAuthToken(user._id);
-				res.redirect(
-					task.route(`/addTask/${user._id}?name=${user.firstName}`).path
-				);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	} catch (e) {
-		console.log(e);
-	}
+	User.findByCredentials(req.body.email, req.body.password)
+		.then((user) => {
+			sess = req.session;
+			sess.email = req.body.email;
+			sess._id = user._id;
+			sess.name = user.firstName;
+			auth.generateAuthToken(user._id);
+			res.redirect(
+				task.route(`/addTask/${user._id}?name=${user.firstName}`).path
+			);
+		})
+		.catch((err) => {
+			req.flash("Error", "Unable to login");
+			res.redirect("/login");
+		});
 });
 
 router.get("/register", (req, res) => {
@@ -60,7 +56,9 @@ router.post("/register", (req, res) => {
 			res.render("login");
 		})
 		.catch((e) => {
-			req.flash("Error", "Please fill up your details");
+			req.flash("Error", "1. Please fill up your details");
+			req.flash("Error", " 2. Check if you set password as 'password'");
+			req.flash("Error", " 3. Please Check your Email");
 			res.redirect("/register");
 		});
 });

@@ -18,12 +18,11 @@ const verifyToken = (req, res, next) => {
 			req.token = bearerHeader;
 			jwt.verify(req.token, process.env.SECRET_KEY, (err, authData) => {
 				if (err) {
-					return res.send("<h1>Please login</h1>");
+					return res.redirect("/login");
 				}
 			});
 			next();
 		} else {
-			// Forbidden
 			res.sendStatus(403);
 		}
 	} catch (e) {

@@ -10,11 +10,13 @@ router.get("/addTask/:id", auth.verifyToken, (req, res) => {
 	req.session.name = req.query.name;
 	req.session._id = _id;
 	Task.find({ owner: _id }, (err, task) => {
-		res.render("addTask", {
-			tasks: task,
-			name: req.query.name,
-			id: _id
-		});
+		if (localstorage.get("token") !== null) {
+			res.render("addTask", {
+				tasks: task,
+				name: req.query.name,
+				id: _id
+			});
+		}
 	});
 });
 
@@ -27,7 +29,8 @@ router.post("/addTask/:id", auth.verifyToken, (req, res) => {
 	try {
 		newTask.save((err, newTask) => {
 			if (err) {
-				console.log(err);
+				req.flash("Error", "Please enter task");
+				res.redirect(`/addTask/${req.params.id}?name=${req.query.name}`);
 			} else {
 				res.redirect(`/addTask/${req.params.id}?name=${req.query.name}`);
 			}

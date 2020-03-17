@@ -31,6 +31,9 @@ const userSchema = mongoose.Schema({
 			if (value.toLowerCase().includes("password")) {
 				throw new Error("Password cannot contain password");
 			}
+			if (value.length < 6) {
+				throw new Error("Too short password");
+			}
 		}
 	},
 	phoneNo: {
