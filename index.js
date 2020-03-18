@@ -7,7 +7,7 @@ const taskRouter = require("./routers/task");
 const userRouter = require("./routers/user");
 const methodOverride = require("method-override");
 const session = require("express-session");
-require("./db/connection");
+require("./db/dbConnection");
 
 const app = express();
 

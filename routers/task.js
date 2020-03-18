@@ -3,7 +3,7 @@ const Task = require("../models/task");
 const auth = require("../auth/auth");
 const localstorage = require("local-storage");
 const router = express.Router();
-require("../db/connection");
+require("../db/dbConnection");
 
 router.get("/addTask/:id", auth.verifyToken, (req, res) => {
 	const _id = req.params.id;
