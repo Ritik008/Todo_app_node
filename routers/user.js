@@ -2,7 +2,7 @@ const express = require("express");
 const User = require("../models/user");
 const task = require("../routers/task");
 const auth = require("../auth/auth");
-require("../db/connection");
+require("../db/dbConnection");
 const router = express.Router();
 
 let sess;
